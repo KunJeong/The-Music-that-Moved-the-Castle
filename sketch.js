@@ -1,13 +1,14 @@
-let violin, piano, yellow;
 let backgroundColor;
-let star1, star2;
+let stars = [];
 let center;
 let newColor;
 
+let instrumentToColor;
+
 function setup() {
+  createCanvas(2800, 2800);
   newColor = color;
-  createCanvas(800, 800);
-  backgroundColor = color(19, 44, 83);
+  backgroundColor = color(14, 31, 50);
   background(backgroundColor);
   blendMode(BLEND);
   frameRate(60);
@@ -15,170 +16,39 @@ function setup() {
   // violin = color(255, 175, 102, 0.5);
   // woodwind = color(242, 239, 143, 0.5);
   // piano = color(115, 194, 224, 0.5);
+  instrumentToColor = {
+    brass: color(255, 128, 170, 1), //pink
+    wood: color(242, 239, 143, 1), //yellow
+    piano: color(147, 207, 217, 1), //blue
+    bowed: color(255, 175, 100, 1), //orange
+    plucked: color(247, 128, 119, 1), //brown
+  };
 
-  violin = color(230, 162, 170, 1);
-  woodwind = color(242, 220, 141, 1);
-  piano = color(147, 207, 217, 1);
-
-  const flame1 = [
-    {
-      color: piano,
-      maxWidth: 18,
-      maxLength: 120,
-      type: "main",
-    },
-    {
-      color: piano,
-      maxWidth: 18,
-      maxLength: 90,
-    },
-    {
-      color: piano,
-      maxWidth: 18,
-      maxLength: 120,
-
-      type: "main",
-    },
-    {
-      color: piano,
-      maxWidth: 18,
-      maxLength: 90,
-    },
-    {
-      color: piano,
-      maxWidth: 18,
-      maxLength: 120,
-      type: "main",
-    },
-    {
-      color: piano,
-      maxWidth: 18,
-      maxLength: 90,
-    },
-  ];
-
-  const flame2 = [
-    {
-      color: violin,
-      maxWidth: 18,
-      maxLength: 160,
-    },
-    {
-      color: piano,
-      maxWidth: 18,
-      maxLength: 120,
-    },
-    {
-      color: woodwind,
-      maxWidth: 18,
-      maxLength: 110,
-    },
-    {
-      color: violin,
-      maxWidth: 18,
-      maxLength: 80,
-    },
-    {
-      color: piano,
-      maxWidth: 18,
-      maxLength: 160,
-    },
-    {
-      color: violin,
-      maxWidth: 18,
-      maxLength: 130,
-    },
-    {
-      color: woodwind,
-      maxWidth: 18,
-      maxLength: 140,
-    },
-    {
-      color: piano,
-      maxWidth: 18,
-      maxLength: 90,
-    },
-    {
-      color: violin,
-      maxWidth: 18,
-      maxLength: 120,
-    },
-    {
-      color: woodwind,
-      maxWidth: 18,
-      maxLength: 140,
-    },
-  ];
-  center = { centerX: 200, centerY: 200 };
-  star1 = createStar(center, 13.75, 720, flame1);
-  star2 = createStar({ centerX: 500, centerY: 500 }, 18, 540, flame2);
+  songs.forEach(({ center, emotion, impact, instruments, beats }) => {
+    let star = new Star(
+      {
+        centerX: center?.centerX ?? random(1200, 3200),
+        centerY: center?.centerY ?? random(1200, 2400),
+      },
+      impact * 10,
+      emotion,
+      instruments,
+      beats,
+      0
+    );
+    stars.push(star);
+  });
 }
 
 function draw() {
+  noLoop();
   noStroke();
   background(backgroundColor);
-  // for (i = 0; i < flameCount; i++) {
-  //   flames.push()
-  // }
-  // console.log(flames);
-  star1.forEach((flame) => {
-    flame.render();
+  console.log(stars);
+  stars.forEach((star) => {
+    star.render();
   });
-  star2.forEach((flame) => {
-    flame.render();
-  });
-
-  // let flame = new Flame(center, orange, 18, 160, 20, 0, 20);
-  // print(flame);
-  // flame.display();
-  drawRadialGradient(
-    center,
-    [
-      { color: color(255), opacity: 1, position: 0 },
-      { color: color(255, 255, 255), opacity: 0.7, position: 0.2 },
-      { color: color(255, 255, 255), opacity: 0.5, position: 0.25 },
-      { color: color(25, 21, 255), opacity: 0.1, position: 0.85 },
-      // { color: color(255, 21, 255), position: 75 },
-      { color: color(25, 21, 255), opacity: 0, position: 1 },
-    ],
-    120
-  );
-  drawRadialGradient(
-    { centerX: 500, centerY: 500 },
-    [
-      { color: color(255), opacity: 1, position: 0 },
-      { color: color(255, 255, 255), opacity: 0.7, position: 0.2 },
-      { color: color(255, 255, 255), opacity: 0.4, position: 0.25 },
-      { color: color(255, 21, 2), opacity: 0.1, position: 0.85 },
-      // { color: color(255, 21, 255), position: 75 },
-      { color: color(255, 21, 2), opacity: 0, position: 1 },
-    ],
-    150
-  );
 }
-
-function createStar(center, avgRadius, w, flameProperties) {
-  let angle = (2 * PI) / flameProperties.length;
-  let flames = [];
-  flameProperties.forEach(({ color, maxWidth, maxLength, type }, index) => {
-    // print(index);
-    flames.push(
-      new Flame(
-        center,
-        color,
-        maxWidth,
-        maxLength,
-        type,
-        avgRadius + random(-5, 5),
-        angle * index,
-        w
-      )
-    );
-  });
-  return flames;
-}
-
-function drawTail() {}
 
 function drawRadialGradient(center, colorStops, size) {
   let { centerX, centerY } = center;
@@ -217,4 +87,8 @@ function drawRadialGradient(center, colorStops, size) {
     }
   });
   pop();
+}
+
+function mouseReleased() {
+  save();
 }
